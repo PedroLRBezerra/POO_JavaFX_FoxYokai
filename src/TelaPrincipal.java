@@ -6,15 +6,21 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 import javafx.stage.Stage;
 
 public class TelaPrincipal extends Application {
-	Canvas canvas = new Canvas(800,600);
-	GraphicsContext gc = canvas.getGraphicsContext2D();
+	public double metadeImagemX(Image img, double x) { 
+		return x - img.getWidth() / 2;
+	}
+	
+	public double metadeImagemY(Image img, double y) { 
+		return y - img.getHeight() / 2;
+	}	
+	
+
 	
 	 double x=380;
 	 double y=300;
@@ -26,22 +32,44 @@ public class TelaPrincipal extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		Image imgFloresta = new Image(
+				getClass().getResourceAsStream("/images/floresta1.png"));
+		Image imgProtagonista = new Image(
+				getClass().getResourceAsStream("/images/protagonista.png"));
+		Image imgHatsune = new Image(
+				getClass().getResourceAsStream("/images/hatsuneinimigo.png"));
+
+		double centerX = imgFloresta.getWidth() / 2;
+		double centerY = imgFloresta.getHeight() / 2;
 		Group grp = new Group();
-		Scene scn = new Scene(grp,800,600);
+		Scene scn = new Scene(grp, imgFloresta.getWidth(), imgFloresta.getHeight());
+		
+		Canvas canvas = new Canvas(imgFloresta.getWidth(), imgFloresta.getHeight());
 		grp.getChildren().add(canvas);
+		
+		GraphicsContext ctx = canvas.getGraphicsContext2D();
 		
 		EventHandler<KeyEvent> manipulador = new Manipulador();
 		EventHandler<KeyEvent> manipuladorRelease = new ManipuladorReleased();
 		stage.addEventFilter(KeyEvent.KEY_PRESSED,manipulador);
 		stage.addEventFilter(KeyEvent.KEY_RELEASED, manipuladorRelease);
 		
-		paint(gc);
-		
 		
 		new AnimationTimer() {
 			
 			@Override
 			public void handle(long now) {
+
+				double centerflorestaX = metadeImagemX(imgProtagonista, centerX);
+				double centerflorestaY = metadeImagemY(imgProtagonista, centerY);
+				
+				double centerhatX = metadeImagemX(imgHatsune, centerX + 400);
+				double centerhatY = metadeImagemY(imgHatsune, centerY);
+				
+				
+				ctx.drawImage(imgFloresta, 0, 0);
+				ctx.drawImage(imgProtagonista, centerflorestaX, centerflorestaY);
+				ctx.drawImage(imgHatsune, centerhatX, centerhatY);
 				move(0,velocidade*isJumping*boost);
 				if(boost>1) {
 					boost-=0.015;
@@ -49,18 +77,9 @@ public class TelaPrincipal extends Application {
 			}
 		}.start();
 		
-		stage.setScene(scn);
 		stage.setTitle("Fox Yokai");
+		stage.setScene(scn);
 		stage.show();
-	}
-	
-	
-	private void paint(GraphicsContext gc) {
-		gc.setFill(Color.PEACHPUFF);
-		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		gc.setFill(Color.DARKRED);
-		gc.fillArc(x, y, 40, 40, 0, 360, ArcType.ROUND);
 	}
 	
 	
@@ -92,7 +111,6 @@ public class TelaPrincipal extends Application {
 	public void move(double x, double y) {
 		this.x +=x;
 		this.y +=y;
-        paint(gc);
 	}
 	
 	
