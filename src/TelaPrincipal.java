@@ -13,15 +13,15 @@ import javafx.stage.Stage;
 
 public class TelaPrincipal extends Application {
 	
-	double protagonistaYLimiteBaixo=330;
-	 double protagonistaYLimiteAlto=130;
+	 double protagonistaYLimiteBaixo=400;
+	 double protagonistaYLimiteAlto=200;
 	
-	 double protagonistaX=250;
+	 double protagonistaX;
 	 double protagonistaY=protagonistaYLimiteBaixo;
 	 
 	 
 	 
-	 double velocidade=4;
+	 double velocidade=4.1;
 	 double boost =1.0;
 	 
 	 int isJumping = 1;
@@ -33,7 +33,7 @@ public class TelaPrincipal extends Application {
 	
 	 Image imgHatsune = new Image(getClass().getResourceAsStream("/images/hatsuneinimigo.png"));
 		
-	 double hatsuX=metadeImagemX(imgHatsune, protagonistaX + 400);
+	 double hatsuX=metadeImagemX(imgHatsune, protagonistaX);
 	 double hatsuY=metadeImagemY(imgHatsune, protagonistaY);
 	 
 	 Canvas canvas = new Canvas(imgFloresta.getWidth(), imgFloresta.getHeight());
@@ -57,6 +57,9 @@ public class TelaPrincipal extends Application {
 
 		double centerX = imgFloresta.getWidth() / 2;
 		double centerY = imgFloresta.getHeight() / 2;
+
+		this.protagonistaX=centerX-(imgProtagonista.getWidth()/2);
+		this.protagonistaY=protagonistaYLimiteBaixo;
 		
 		
 		Group grp = new Group();
@@ -80,7 +83,7 @@ public class TelaPrincipal extends Application {
 			public void handle(long now) {
 				protagonistaMover(velocidade*isJumping*boost);
 				if(boost>1) {
-					boost-=0.015;
+					boost-=0.02;
 				}
 				
 				
@@ -104,9 +107,9 @@ public class TelaPrincipal extends Application {
 		@Override
 		public void handle(KeyEvent event) {
 			if (event.getCode() == KeyCode.UP) {
-		    	if(isJumping==1) {
+		    	if(isJumping==0) {
 					isJumping=-1;
-					boost=2;
+					boost=2.4;
 				}
 		    }
 		}
@@ -125,8 +128,9 @@ public class TelaPrincipal extends Application {
 		this.protagonistaY +=y;
 		
 		
-		if(protagonistaY>protagonistaYLimiteBaixo) {
+		if(protagonistaY>=protagonistaYLimiteBaixo) {
 			this.protagonistaY=this.protagonistaYLimiteBaixo;
+			this.isJumping=0;
 		}
 		
 		if(protagonistaY<protagonistaYLimiteAlto) {
