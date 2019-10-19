@@ -13,12 +13,15 @@ import javafx.stage.Stage;
 
 public class TelaPrincipal extends Application {
 	
+	double protagonistaYLimiteBaixo=330;
+	 double protagonistaYLimiteAlto=130;
+	
 	 double protagonistaX=250;
-	 double protagonistaY=330;
+	 double protagonistaY=protagonistaYLimiteBaixo;
 	 
-	 double protagonistaYLimite=330;
 	 
-	 double velocidade=5;
+	 
+	 double velocidade=4;
 	 double boost =1.0;
 	 
 	 int isJumping = 1;
@@ -75,7 +78,7 @@ public class TelaPrincipal extends Application {
 			
 			@Override
 			public void handle(long now) {
-				//protagonistaMover(0,velocidade*isJumping*boost);
+				protagonistaMover(velocidade*isJumping*boost);
 				if(boost>1) {
 					boost-=0.015;
 				}
@@ -98,13 +101,10 @@ public class TelaPrincipal extends Application {
 	}
 	
 	class Manipulador implements EventHandler<KeyEvent> {
-
 		@Override
 		public void handle(KeyEvent event) {
 			if (event.getCode() == KeyCode.UP) {
-		    	if(protagonistaY<=0 ||!(protagonistaX>0 && protagonistaX< 600) ) {
-		    		protagonistaMover(0,0);
-				} else {
+		    	if(isJumping==1) {
 					isJumping=-1;
 					boost=2;
 				}
@@ -114,17 +114,25 @@ public class TelaPrincipal extends Application {
 		
 	
 	class ManipuladorReleased implements EventHandler<KeyEvent>{
-
 		@Override
 		public void handle(KeyEvent event) {
-			protagonistaMover(0,0);
+			protagonistaMover(0);
 		}
 		
 	}
 	
-	public void protagonistaMover(double x, double y) {
-		this.protagonistaX +=x;
+	public void protagonistaMover(double y) {
 		this.protagonistaY +=y;
+		
+		
+		if(protagonistaY>protagonistaYLimiteBaixo) {
+			this.protagonistaY=this.protagonistaYLimiteBaixo;
+		}
+		
+		if(protagonistaY<protagonistaYLimiteAlto) {
+			this.protagonistaY=this.protagonistaYLimiteAlto;
+			this.isJumping=1;
+		}
 	}
 	
 	
