@@ -13,6 +13,15 @@ import javafx.stage.Stage;
 
 public class TelaPrincipal extends Application {
 	
+	Image imgFloresta = new Image(getClass().getResourceAsStream("/images/floresta1.png"));
+	 
+	 Image imgProtagonista = new Image(getClass().getResourceAsStream("/images/protagonista.png"));
+	
+	 Image imgHatsune = new Image(getClass().getResourceAsStream("/images/hatsuneinimigo.png"));
+	 
+	 double florestaWidth =imgFloresta.getWidth();
+	 
+	
 	 double protagonistaYLimiteBaixo=400;
 	 double protagonistaYLimiteAlto=200;
 	
@@ -20,21 +29,30 @@ public class TelaPrincipal extends Application {
 	 double protagonistaY=protagonistaYLimiteBaixo;
 	 
 	 
-	 
-	 double velocidade=4.1;
-	 double boost =1.0;
+	 double protagonistaVelocidade=4.1;
+	 double protagonistaBoost =1.0;
 	 
 	 int isJumping = 1;
 
 	 
-	 Image imgFloresta = new Image(getClass().getResourceAsStream("/images/floresta1.png"));
-	 
-	 Image imgProtagonista = new Image(getClass().getResourceAsStream("/images/protagonista.png"));
-	
-	 Image imgHatsune = new Image(getClass().getResourceAsStream("/images/hatsuneinimigo.png"));
-		
-	 double hatsuX=metadeImagemX(imgHatsune, protagonistaX);
+	 double hatsuX=metadeImagemX(imgHatsune, florestaWidth);
 	 double hatsuY=metadeImagemY(imgHatsune, protagonistaY);
+	 
+	 double hatsuHidth=imgHatsune.getWidth();
+	 
+	 double hatsuYLimiteBaixo=400;
+	 double hatsuYLimiteAlto=290;
+	 
+	 
+	 double hatsuVelocidade;
+	 int hatsuVelocidadeDir=1;;
+	 
+	 boolean hatsuIsOut=true;
+	 
+	 long hatsuWaitTime=0;
+	 long hatsuWaitedTime=1;
+	 
+	 
 	 
 	 Canvas canvas = new Canvas(imgFloresta.getWidth(), imgFloresta.getHeight());
 	 
@@ -61,6 +79,8 @@ public class TelaPrincipal extends Application {
 		this.protagonistaX=centerX-(imgProtagonista.getWidth()/2);
 		this.protagonistaY=protagonistaYLimiteBaixo;
 		
+		this.hatsuY=hatsuYLimiteAlto;
+		
 		
 		Group grp = new Group();
 		Scene scn = new Scene(grp, imgFloresta.getWidth(), imgFloresta.getHeight());
@@ -76,16 +96,20 @@ public class TelaPrincipal extends Application {
 		
 		paint();
 		
+		hatsuReset();
 		
 		new AnimationTimer() {
 			
 			@Override
 			public void handle(long now) {
-				protagonistaMover(velocidade*isJumping*boost);
-				if(boost>1) {
-					boost-=0.02;
+				protagonistaMover(protagonistaVelocidade*isJumping*protagonistaBoost);
+				
+				if(protagonistaBoost>1) {
+					protagonistaBoost-=0.02;
 				}
 				
+				
+				hatsuMover(hatsuVelocidade);
 				
 				paint();
 			}
@@ -109,7 +133,7 @@ public class TelaPrincipal extends Application {
 			if (event.getCode() == KeyCode.UP) {
 		    	if(isJumping==0) {
 					isJumping=-1;
-					boost=2.4;
+					protagonistaBoost=2.4;
 				}
 		    }
 		}
@@ -124,7 +148,7 @@ public class TelaPrincipal extends Application {
 		
 	}
 	
-	public void protagonistaMover(double y) {
+	private void protagonistaMover(double y) {
 		this.protagonistaY +=y;
 		
 		
@@ -139,6 +163,39 @@ public class TelaPrincipal extends Application {
 		}
 	}
 	
+	private void hatsuMover(double x) {
+			this.hatsuX += x;
+			if (this.hatsuX <= -this.hatsuHidth) {
+				hatsuX = -hatsuHidth;
+				hatsuReset();
+			}
+			if (this.hatsuX >= this.florestaWidth) {
+				this.hatsuX = this.florestaWidth;
+				hatsuReset();
+			}
+	}
+	
+	
+	private void hatsuReset() {
+		if(this.hatsuIsOut) {
+			if(hatsuWaitedTime>hatsuWaitTime) {
+				hatsuVelocidade=(Math.random()*8)+8;
+				hatsuVelocidadeDir*=-1;
+				hatsuVelocidade*=hatsuVelocidadeDir;
+				hatsuY=hatsuYLimiteBaixo-(Math.random()*110);
+				hatsuIsOut=false;
+			}
+			else {
+				hatsuWaitedTime++;
+			}
+		}
+		
+		else {
+			hatsuIsOut=true;
+			hatsuWaitedTime=0;
+			hatsuWaitTime=(long) ((Math.random()*15)+10);
+		}
+	}
 	
 	
 	
