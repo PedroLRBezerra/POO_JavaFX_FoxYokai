@@ -9,6 +9,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class TelaPrincipal extends Application {
@@ -80,7 +82,8 @@ public class TelaPrincipal extends Application {
 		this.protagonistaY=protagonistaYLimiteBaixo;
 		
 		this.hatsuY=hatsuYLimiteAlto;
-		
+	    IntValue points = new IntValue(0);
+
 		
 		Group grp = new Group();
 		Scene scn = new Scene(grp, imgFloresta.getWidth(), imgFloresta.getHeight());
@@ -95,6 +98,10 @@ public class TelaPrincipal extends Application {
 		stage.addEventFilter(KeyEvent.KEY_RELEASED, manipuladorRelease);
 		
 		paint();
+		Font theFont = Font.font( "Helvetica", FontWeight.BOLD, 24 );
+		ctx.setFont( theFont );
+		ctx.setStroke( javafx.scene.paint.Color.KHAKI );
+		ctx.setLineWidth(1);
 		
 		hatsuReset();
 		
@@ -110,8 +117,11 @@ public class TelaPrincipal extends Application {
 				
 				
 				hatsuMover(hatsuVelocidade);
-				
+
 				paint();
+	            String TextPontos = "Pontos: " + points.value;
+	            ctx.fillText( TextPontos, 600, 40 );
+	            ctx.strokeText( TextPontos, 600, 40 );
 			}
 		}.start();
 		
